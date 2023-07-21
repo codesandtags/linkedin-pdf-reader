@@ -95,8 +95,8 @@ function extractCertifications(content) {
   // If a match was found, it removes the page information from the matched text, splits the text into lines (using the newline character as the separator),
   // and returns the resulting array of lines. If no match was found, it returns an empty array.
   return certificationsMatch
-    ? removePageInfo(certificationsMatch[2]).split("\n")
-    : [];
+    ? removePageInfo(certificationsMatch[2]).split("\n").join(' ')
+    : '';
 }
 
 function extractSummary(content) {
@@ -155,7 +155,20 @@ function extractEducation(content) {
 
   // If a match was found, it removes the page information from the matched text, splits the text into lines (using the newline character as the separator),
   // and returns the resulting array of lines. If no match was found, it returns an empty array.
-  return educationMatch ? removePageInfo(educationMatch[2]).split("\n") : [];
+  const educationStr = educationMatch ? removePageInfo(educationMatch[2]) : '';
+  let educationRegex = /(.+?)\n((?:.+\n)*?)· \((.+?)\)/g;
+  let educationObjArray = [];
+  let match;
+  
+  while ((match = educationRegex.exec(educationStr)) !== null) {
+      educationObjArray.push({
+          institution: match[1].trim(),
+          degree: match[2].replace(/\n/g, ' ').trim(),
+          duration: match[3].trim(),
+      });
+  }
+
+  return educationObjArray;
 }
 
 function extractLanguages(content) {
@@ -168,7 +181,17 @@ function extractLanguages(content) {
 
   // If a match was found, it removes the page information from the matched text, splits the text into lines (using the newline character as the separator),
   // and returns the resulting array of lines. If no match was found, it returns an empty array.
-  return languagesMatch ? removePageInfo(languagesMatch[1]).split("\n") : [];
+  const languagesArray = languagesMatch ? removePageInfo(languagesMatch[1]).split("\n") : [];
+  const languagesObjArray = [];
+
+    for (let i = 0; i < languagesArray.length; i += 2) {
+      languagesObjArray.push({
+          language: languagesArray[i],
+          level: languagesArray[i + 1]
+      });
+  }
+
+  return languagesObjArray;
 }
 
 function extractHonorsAwards(content) {
