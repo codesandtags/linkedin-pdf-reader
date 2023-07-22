@@ -56,12 +56,22 @@ function extractContact(content) {
   // The function then returns an object with the extracted contact information.
   // For each piece of contact information, it checks if a match was found (i.e., if the match variable is not `null`).
   // If a match was found, it includes the matched text in the returned object; if not, it includes `null`.
+
+  let lines = content.split('\n');
+  let summaryIndex = lines.indexOf('Summary');
+  let location = lines[summaryIndex - 1].trim();
+  let title = lines[summaryIndex - 2].trim();
+  let name = lines[summaryIndex - 3].trim();
+
   return {
     phone: phoneMatch ? phoneMatch[1] : null,
     email: emailMatch ? emailMatch[1] : null,
     linkedin: linkedinMatch ? linkedinMatch[1] : null,
     blog: blogMatch ? blogMatch[1] : null,
     personalWebsite: personalWebsiteMatch ? personalWebsiteMatch[1] : null,
+    location,
+    title,
+    name
   };
 }
 
